@@ -1,5 +1,6 @@
 package mate.project.store.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -7,7 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import lombok.Data;
-import org.hibernate.validator.constraints.UniqueElements;
 
 @Entity
 @Data
@@ -16,9 +16,11 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
+    private String title;
+    @NotNull
     private String author;
     @NotNull
-    @UniqueElements
+    @Column(unique = true)
     private String isbn;
     @NotNull
     private BigDecimal price;
