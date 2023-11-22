@@ -1,4 +1,4 @@
-package mate.store.store;
+package mate.project.store;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
