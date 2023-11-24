@@ -1,22 +1,19 @@
 package mate.project.store.repository.impl;
 
 import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import mate.project.store.entity.Book;
 import mate.project.store.repository.BookRepository;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
     private final SessionFactory sessionFactory;
-
-    @Autowired
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     @Override
     public Book save(Book book) {
@@ -47,6 +44,15 @@ public class BookRepositoryImpl implements BookRepository {
                     .getResultList();
         } catch (Exception e) {
             throw new RuntimeException("Can't get all books from DB", e);
+        }
+    }
+
+    @Override
+    public Optional<Book> getBookById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("SELECT book FROM Book book WHERE book.id = :id", Book.class)
+                    .setParameter("id", id)
+                    .uniqueResultOptional();
         }
     }
 }
