@@ -1,28 +1,40 @@
 package mate.project.store.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import mate.project.store.dto.BookDto;
+import mate.project.store.dto.CreateBookRequestDto;
 import mate.project.store.entity.Book;
+import mate.project.store.exception.EntityNotFoundException;
+import mate.project.store.mapper.BookMapper;
 import mate.project.store.repository.BookRepository;
 import mate.project.store.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
-    @Autowired
-    public BookServiceImpl(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    @Override
+    public BookDto save(CreateBookRequestDto bookRequestDto) {
+        Book book = bookMapper.toEntity(bookRequestDto);
+        Book savedBook = bookRepository.save(book);
+        return bookMapper.toDto(savedBook);
     }
 
     @Override
-    public Book save(Book book) {
-        return bookRepository.save(book);
+    public List<BookDto> findAll() {
+        return bookRepository.findAll().stream()
+                .map(bookMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public BookDto findById(Long id) {
+        return bookMapper.toDto(bookRepository.getBookById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Can't find book with id " + id)));
     }
 }
