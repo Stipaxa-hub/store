@@ -2,6 +2,7 @@ package mate.project.store.service;
 
 import java.util.List;
 import mate.project.store.dto.BookDto;
+import mate.project.store.dto.BookSearchParametersDto;
 import mate.project.store.dto.CreateBookRequestDto;
 
 public interface BookService {
@@ -14,4 +15,6 @@ public interface BookService {
     BookDto updateById(Long id, CreateBookRequestDto bookRequestDto);
 
     void deleteById(Long id);
+
+    public List<BookDto> search(BookSearchParametersDto params);
 }
