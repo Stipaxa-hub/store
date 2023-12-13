@@ -1,24 +1,35 @@
 package mate.project.store.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import lombok.Data;
 import org.hibernate.validator.constraints.ISBN;
 
 @Data
 public class CreateBookRequestDto {
-    @NotNull
+    @NotNull(message = "Title can't be null")
+    @NotBlank(message = "Title can't be empty")
+    @Size(max = 200, message = "Title should not be greater than 200")
     private String title;
-    @NotNull
+    @NotNull(message = "Author can't be null")
+    @NotBlank(message = "Author can't be empty")
+    @Size(max = 200, message = "Author should not be greater than 200")
     private String author;
-    @NotNull
-    @ISBN
+    @NotNull(message = "ISBN can't be null")
+    @NotBlank(message = "ISBN can't be empty")
+    @ISBN(message = "ISBN should be correct")
     private String isbn;
-    @NotNull
-    @Min(0)
+    @NotNull(message = "Price can't be null")
+    @NotBlank(message = "Price can't be empty")
+    @Positive(message = "Price should be greater than 0")
     private BigDecimal price;
-    @NotNull
+    @NotNull(message = "Description can't be null")
+    @NotBlank(message = "Description can't be empty")
+    @Min(20)
     private String description;
     private String coverImage;
 }
