@@ -6,8 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,30 +14,29 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
+@Data
 @Entity
-@Table(name = "books")
+@Table(name = "users")
+@NoArgsConstructor
 @SQLDelete(sql = "UPDATE books SET is_deleted = TRUE WHERE id = ?")
 @Where(clause = "is_deleted = FALSE")
-@Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class Book {
+@Builder
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
-    private String title;
-    @NotNull
-    private String author;
-    @NotNull
+    @Email
     @Column(nullable = false, unique = true)
-    private String isbn;
-    @NotNull
+    private String email;
     @Column(nullable = false)
-    private BigDecimal price;
-    private String description;
-    private String coverImage;
+    private String password;
+    @Column(nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
+    private String shippingAddress;
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted = false;
+    private boolean isDeleted;
 }

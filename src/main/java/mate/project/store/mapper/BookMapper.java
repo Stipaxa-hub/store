@@ -1,8 +1,8 @@
 package mate.project.store.mapper;
 
 import mate.project.store.config.MapperConfig;
-import mate.project.store.dto.BookDto;
-import mate.project.store.dto.CreateBookRequestDto;
+import mate.project.store.dto.book.BookDto;
+import mate.project.store.dto.book.CreateBookRequestDto;
 import mate.project.store.entity.Book;
 import org.mapstruct.Mapper;
 
