@@ -1,4 +1,4 @@
-package mate.project.store.dto;
+package mate.project.store.dto.book;
 
 import java.math.BigDecimal;
 import lombok.Builder;
