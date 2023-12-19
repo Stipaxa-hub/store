@@ -8,6 +8,7 @@ import mate.project.store.exception.RegistrationException;
 import mate.project.store.mapper.UserMapper;
 import mate.project.store.repository.user.UserRepository;
 import mate.project.store.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +17,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request)
@@ -24,7 +26,7 @@ public class UserServiceImpl implements UserService {
             throw new RegistrationException("Can't register user");
         }
         User user = userMapper.toEntity(request);
-        user.setPassword(request.password());
+        user.setPassword(passwordEncoder.encode(request.password()));
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }
