@@ -6,18 +6,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import mate.project.store.validator.impl.FieldMatchValidator;
+import mate.project.store.validator.impl.PasswordValidator;
 
-@Constraint(validatedBy = FieldMatchValidator.class)
-@Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Constraint(validatedBy = PasswordValidator.class)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FieldMatch {
-
-    String message() default "Fields values don't match!";
+public @interface Password {
+    String message() default "Invalid format password";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-
-    String field();
-
-    String fieldMatch();
 }

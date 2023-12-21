@@ -51,19 +51,19 @@ public class User implements UserDetails {
     private String shippingAddress;
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Role> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName().name()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @Override

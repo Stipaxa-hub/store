@@ -1,10 +1,11 @@
 package mate.project.store.dto.user;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import mate.project.store.validator.Email;
 import mate.project.store.validator.FieldMatch;
+import mate.project.store.validator.Password;
 
 @FieldMatch(
         field = "password",
@@ -14,14 +15,16 @@ import mate.project.store.validator.FieldMatch;
 public record UserRegistrationRequestDto(
         @NotNull(message = "Email can't be null")
         @NotBlank(message = "Email can't be empty")
-        @Email(message = "Incorrect email")
+        @Email
         String email,
         @NotNull
         @NotBlank
+        @Password
         @Size(min = 8, max = 35, message = "Password size should be between 8 and 35")
         String password,
         @NotNull
         @NotBlank
+        @Password
         @Size(min = 8, max = 35, message = "Password size should be between 8 and 35")
         String repeatPassword,
         @NotNull(message = "First name can't be null")
