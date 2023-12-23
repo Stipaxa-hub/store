@@ -50,7 +50,7 @@ public class BookController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
-    @Operation(summary = "Get all books", description = "Get all books")
+    @Operation(summary = "Update books", description = "Update books")
     public BookDto update(@PathVariable Long id,
                           @RequestBody @Valid CreateBookRequestDto requestDto) {
         return bookService.updateById(id, requestDto);
