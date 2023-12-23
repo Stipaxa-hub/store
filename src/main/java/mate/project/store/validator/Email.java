@@ -6,18 +6,14 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import mate.project.store.validator.impl.FieldMatchValidator;
+import mate.project.store.validator.impl.EmailValidator;
 
-@Constraint(validatedBy = FieldMatchValidator.class)
-@Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+
+@Constraint(validatedBy = EmailValidator.class)
+@Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FieldMatch {
-
-    String message() default "Fields values don't match!";
+public @interface Email {
+    String message() default "Invalid format email";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
-
-    String field();
-
-    String fieldMatch();
 }

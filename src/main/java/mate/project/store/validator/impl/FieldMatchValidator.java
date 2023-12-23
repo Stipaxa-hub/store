@@ -1,7 +1,8 @@
-package mate.project.store.validator;
+package mate.project.store.validator.impl;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import mate.project.store.validator.FieldMatch;
 import org.springframework.beans.BeanWrapperImpl;
 
 public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Object> {
