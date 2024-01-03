@@ -12,6 +12,7 @@ import mate.project.store.exception.RegistrationException;
 import mate.project.store.mapper.UserMapper;
 import mate.project.store.repository.role.RoleRepository;
 import mate.project.store.repository.user.UserRepository;
+import mate.project.store.service.ShoppingCartService;
 import mate.project.store.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final ShoppingCartService shoppingCartService;
 
     @Override
     public UserResponseDto register(UserRegistrationRequestDto request)
@@ -37,6 +39,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new EntityNotFoundException("Can't find default role"));
         user.setRoles(Set.of(defaultRoleForNewUser));
         User savedUser = userRepository.save(user);
+        shoppingCartService.createShoppingCart(savedUser);
         return userMapper.toDto(savedUser);
     }
 }

@@ -1,6 +1,7 @@
 package mate.project.store.dto.book;
 
 import java.math.BigDecimal;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,4 +15,5 @@ public class BookDto {
     private BigDecimal price;
     private String description;
     private String coverImage;
+    private Set<Long> categoriesIds;
 }
