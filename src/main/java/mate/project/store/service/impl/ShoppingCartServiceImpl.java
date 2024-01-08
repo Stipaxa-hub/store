@@ -1,5 +1,6 @@
 package mate.project.store.service.impl;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.project.store.dto.cartitem.CartItemRequestDto;
@@ -59,6 +60,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                                 + cartItemRequestDto.bookId()));
         CartItem cartItem = getCartItem(shoppingCart, book);
         cartItem.setQuantity(cartItemRequestDto.quantity());
+        cartItemRepository.save(cartItem);
         return cartItemMapper.toDto(cartItem);
     }
 
@@ -86,18 +88,18 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     private CartItem getCartItem(ShoppingCart shoppingCart, Book book) {
-        if (shoppingCart == null || book == null) {
-            throw new IllegalArgumentException("ShoppingCart and Book cannot be null");
+        Optional<CartItem> cartItemOptional = shoppingCart.getCartItems().stream()
+                .filter(i -> i.getBook().equals(book))
+                .findFirst();
+        CartItem cartItem;
+        if (cartItemOptional.isPresent()) {
+            cartItem = cartItemOptional.get();
+        } else {
+            cartItem = new CartItem();
+            cartItem.setShoppingCart(shoppingCart);
+            cartItem.setBook(book);
         }
-        return shoppingCart.getCartItems().stream()
-                .filter(item -> item.getBook().equals(book))
-                .findFirst()
-                .orElseGet(() -> {
-                    CartItem newCartItem = new CartItem();
-                    newCartItem.setShoppingCart(shoppingCart);
-                    newCartItem.setBook(book);
-                    return newCartItem;
-                });
+        return cartItem;
     }
 
     private ShoppingCart getCurrentUserCart(User currentUser) {

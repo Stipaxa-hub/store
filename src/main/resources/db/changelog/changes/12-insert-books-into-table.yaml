@@ -1,0 +1,71 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-books-into-table
+      author: Stepan
+      changes:
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  {
+                    name: title,
+                    value: "Harry Potter and Philosopher's Stone"
+                  }
+              - column:
+                  {
+                    name: author,
+                    value: "J. K. Rowling"
+                  }
+              - column:
+                  {
+                    name: isbn,
+                    value: "978-0-7475-3269-9"
+                  }
+              - column:
+                  {
+                    name: price,
+                    value: "111.11"
+                  }
+              - column:
+                  {
+                    name: description,
+                    value: "The first novel in the Harry Potter."
+                  }
+              - column:
+                  {
+                    name: cover_image,
+                    value: "Cover for Harry Potter and Philosopher's Stone"
+                  }
+        - insert:
+            tableName: books
+            columns:
+              - column:
+                  {
+                    name: title,
+                    value: "Harry Potter and the Chamber of Secrets"
+                  }
+              - column:
+                  {
+                    name: author,
+                    value: "J. K. Rowling"
+                  }
+              - column:
+                  {
+                    name: isbn,
+                    value: "0-7475-3849-2"
+                  }
+              - column:
+                  {
+                    name: price,
+                    value: "222.22"
+                  }
+              - column:
+                  {
+                    name: description,
+                    value: "The plot follows Harry's second year at Hogwarts School of Witchcraft and Wizardry."
+                  }
+              - column:
+                  {
+                    name: cover_image,
+                    value: "Cover for Harry Potter and the Chamber of Secrets"
+                  }

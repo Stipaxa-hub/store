@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert categories into table
+      author: Stepan
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  {
+                    name: name,
+                    value: "Fantasy novel"
+                  }
