@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: create-books-table
+      id: create-order-items-table
       author: Stepan
       changes:
         - createTable:
-            tableName: books
+            tableName: order_items
             columns:
               - column:
                   name: id
@@ -12,34 +12,30 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    nullable: false
               - column:
-                  name: title
-                  type: varchar(255)
+                  name: order_id
+                  type: bigint
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_order_items_order_id
+                    references: orders(id)
               - column:
-                  name: author
-                  type: varchar(255)
+                  name: book_id
+                  type: bigint
                   constraints:
                     nullable: false
+                    foreignKeyName: fk_order_items_book_id
+                    references: books(id)
               - column:
-                  name: isbn
-                  type: varchar(255)
+                  name: quantity
+                  type: integer
                   constraints:
-                    unique: true
                     nullable: false
               - column:
                   name: price
                   type: decimal
                   constraints:
                     nullable: false
-              - column:
-                  name: description
-                  type: varchar(255)
-              - column:
-                  name: cover_image
-                  type: varchar(255)
               - column:
                   name: is_deleted
                   type: boolean
