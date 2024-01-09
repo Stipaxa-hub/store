@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import lombok.Data;
@@ -20,8 +19,8 @@ import org.hibernate.annotations.Where;
 @Data
 @Entity
 @Table(name = "order_items")
-@SQLDelete(sql = "UPDATE order_items SET is_deleted = true WHERE id = ?")
-@Where(clause = "is_deleted = false")
+@SQLDelete(sql = "UPDATE order_items SET is_deleted = TRUE WHERE id = ?")
+@Where(clause = "is_deleted = FALSE")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +30,7 @@ public class OrderItem {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Order order;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
