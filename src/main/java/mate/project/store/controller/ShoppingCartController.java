@@ -9,6 +9,7 @@ import mate.project.store.dto.cartitem.CartItemResponseDto;
 import mate.project.store.dto.cartitem.CartItemUpdateRequestDto;
 import mate.project.store.dto.shoppingcart.ShoppingCartDto;
 import mate.project.store.service.ShoppingCartService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Shopping cart management", description = "Endpoints for managing shopping cart")
@@ -47,6 +49,7 @@ public class ShoppingCartController {
     }
 
     @DeleteMapping("/cart-items-{idCartItem}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete cart item from shopping cart")
     public void delete(@PathVariable Long idCartItem) {
         shoppingCartService.delete(idCartItem);

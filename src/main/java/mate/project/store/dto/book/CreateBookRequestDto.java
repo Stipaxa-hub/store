@@ -30,6 +30,6 @@ public class CreateBookRequestDto {
     @NotBlank(message = "Description can't be empty")
     private String description;
     private String coverImage;
-    @NotBlank
+    @NotNull
     private Set<Long> categoriesIds;
 }
