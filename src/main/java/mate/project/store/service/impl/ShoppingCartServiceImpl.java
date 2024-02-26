@@ -21,6 +21,7 @@ import mate.project.store.repository.user.UserRepository;
 import mate.project.store.service.ShoppingCartService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final ShoppingCartMapper shoppingCartMapper;
     private final CartItemMapper cartItemMapper;
 
+    @Transactional(readOnly = true)
     @Override
     public ShoppingCartDto getShoppingCart(Authentication authentication) {
         String email = authentication.getName();
@@ -46,6 +48,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartDto;
     }
 
+    @Transactional
     @Override
     public CartItemResponseDto addCartItem(CartItemRequestDto cartItemRequestDto,
                                            Authentication authentication) {

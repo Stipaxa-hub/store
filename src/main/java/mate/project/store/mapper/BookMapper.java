@@ -22,7 +22,7 @@ public interface BookMapper {
         Set<Long> categoriesIds = book.getCategories().stream()
                 .map(Category::getId)
                 .collect(Collectors.toSet());
-        bookDto.setCategoriesIds(bookDto.getCategoriesIds());
+        bookDto.setCategoriesIds(categoriesIds);
     }
 
     default Set<Category> mapToCategorySet(Set<Long> categoriesIds) {

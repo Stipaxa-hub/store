@@ -27,6 +27,7 @@ import mate.project.store.service.OrderService;
 import mate.project.store.service.ShoppingCartService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
 
+    @Transactional
     @Override
     public OrderDto placeOrder(OrderAddressRequestDto requestDto, Authentication authentication) {
         Order order = new Order();
@@ -62,6 +64,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDto(order);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<OrderDto> getAllOrders(Authentication authentication, Pageable pageable) {
         User user = userRepository.findByEmail(authentication.getName())
@@ -73,6 +76,7 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public OrderDto updateOrderStatus(Long orderId, OrderStatusRequestDto requestDto) {
         Order order = orderRepository.getOrderById(orderId)
@@ -83,6 +87,7 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.toDto(order);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Set<OrderItemDto> getAllOrderItems(Long orderId, Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName())
@@ -98,6 +103,7 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toSet());
     }
 
+    @Transactional(readOnly = true)
     @Override
     public OrderItemDto getOrderItemById(Long orderId,
                                          Long orderItemId,
