@@ -10,5 +10,5 @@ COPY --from=builder jv-book-store/dependencies/ ./
 COPY --from=builder jv-book-store/spring-boot-loader/ ./
 COPY --from=builder jv-book-store/snapshot-dependencies/ ./
 COPY --from=builder jv-book-store/application/ ./
-ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
+ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
 EXPOSE 8080
