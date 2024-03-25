@@ -107,8 +107,11 @@ class BookServiceTest {
     }
 
     @Test
+    @DisplayName("Testing to update by invalid id")
     void findById_WithNotValid_ShouldThrowException() {
         Long bookId = 0L;
+        
+        when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, (() -> bookService.findById(bookId)));
     }
