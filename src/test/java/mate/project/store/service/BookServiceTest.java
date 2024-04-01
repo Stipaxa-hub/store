@@ -107,7 +107,7 @@ class BookServiceTest {
     }
 
     @Test
-    @DisplayName("Testing to update by invalid id")
+    @DisplayName("Testing to find by invalid id")
     void findById_WithNotValid_ShouldThrowException() {
         Long bookId = 0L;
         
