@@ -1,5 +1,15 @@
 package mate.project.store.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import mate.project.store.dto.category.CategoryDto;
 import mate.project.store.dto.category.CategoryRequestDto;
 import mate.project.store.entity.Category;
@@ -17,15 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
@@ -144,11 +145,13 @@ class CategoryServiceTest {
     void updateById_NotValidId_ShouldThrowException() {
         Long categoryId = 100L;
 
-        CategoryRequestDto categoryRequestDto = createDefaultCategoryRequestDto(createDefaultCategory());
+        CategoryRequestDto categoryRequestDto =
+                createDefaultCategoryRequestDto(createDefaultCategory());
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, (() -> categoryService.updateById(categoryId, categoryRequestDto)));
+        assertThrows(EntityNotFoundException.class,
+                (() -> categoryService.updateById(categoryId, categoryRequestDto)));
     }
 
     @Test
