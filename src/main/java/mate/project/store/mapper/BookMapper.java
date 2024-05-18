@@ -1,5 +1,6 @@
 package mate.project.store.mapper;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import mate.project.store.config.MapperConfig;
@@ -10,6 +11,7 @@ import mate.project.store.entity.Category;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 
 @Mapper(config = MapperConfig.class)
 public interface BookMapper {
@@ -25,6 +27,7 @@ public interface BookMapper {
         bookDto.setCategoriesIds(categoriesIds);
     }
 
+    @AfterMapping
     default Set<Category> mapToCategorySet(Set<Long> categoriesIds) {
         return categoriesIds.stream()
                 .map(id -> {
@@ -33,5 +36,12 @@ public interface BookMapper {
                     return category;
                 })
                 .collect(Collectors.toSet());
+    }
+
+    @Named("bookById")
+    default Book bookById(Long id) {
+        return Optional.ofNullable(id)
+                .map(Book::new)
+                .orElse(null);
     }
 }

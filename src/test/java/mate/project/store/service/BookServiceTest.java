@@ -218,15 +218,16 @@ class BookServiceTest {
         List<BookDto> books = new ArrayList<>();
 
         for (int i = 1; i <= 3; i++) {
-            BookDto bookDto = new BookDto();
-            bookDto.setId(Long.valueOf(i));
-            bookDto.setTitle("Book" + i);
-            bookDto.setAuthor("Author" + i);
-            bookDto.setIsbn("1234567" + i);
-            bookDto.setPrice(BigDecimal.valueOf(i));
-            bookDto.setDescription("Description" + i);
-            bookDto.setCoverImage("CoverImage" + i);
-            bookDto.setCategoriesIds(Set.of(Long.valueOf(i)));
+            BookDto bookDto = BookDto.builder()
+                    .id(Long.valueOf(i))
+                    .title("Book" + i)
+                    .author("Author" + i)
+                    .isbn("1234567" + i)
+                    .price(BigDecimal.valueOf(i))
+                    .description("Description" + i)
+                    .coverImage("CoverImage" + i)
+                    .categoriesIds(Set.of(Long.valueOf(i)))
+                    .build();
             books.add(bookDto);
         }
         
@@ -234,31 +235,31 @@ class BookServiceTest {
     }
 
     private BookDto createDefaultBookDto(Book book) {
-        BookDto bookDto = new BookDto();
-        bookDto.setId(book.getId());
-        bookDto.setTitle(book.getTitle());
-        bookDto.setAuthor(book.getAuthor());
-        bookDto.setIsbn(book.getIsbn());
-        bookDto.setPrice(book.getPrice());
-        bookDto.setDescription(book.getDescription());
-        bookDto.setCoverImage(book.getCoverImage());
-        bookDto.setCategoriesIds(book.getCategories().stream()
-                .map(Category::getId)
-                .collect(Collectors.toSet()));
-        return bookDto;
+        return BookDto.builder()
+                .id(book.getId())
+                .title(book.getTitle())
+                .author(book.getAuthor())
+                .isbn(book.getIsbn())
+                .price(book.getPrice())
+                .description(book.getDescription())
+                .coverImage(book.getCoverImage())
+                .categoriesIds(book.getCategories().stream()
+                        .map(Category::getId)
+                        .collect(Collectors.toSet()))
+                .build();
     }
 
     private CreateBookRequestDto createDefaultBookRequestDto(Book book) {
-        CreateBookRequestDto createBookRequestDto = new CreateBookRequestDto();
-        createBookRequestDto.setTitle(book.getTitle());
-        createBookRequestDto.setAuthor(book.getAuthor());
-        createBookRequestDto.setIsbn(book.getIsbn());
-        createBookRequestDto.setPrice(book.getPrice());
-        createBookRequestDto.setDescription(book.getDescription());
-        createBookRequestDto.setCoverImage(book.getCoverImage());
-        createBookRequestDto.setCategoriesIds(book.getCategories().stream()
-                .map(Category::getId)
-                .collect(Collectors.toSet()));
-        return createBookRequestDto;
+        return CreateBookRequestDto.builder()
+                .title(book.getTitle())
+                .author(book.getAuthor())
+                .isbn(book.getIsbn())
+                .price(book.getPrice())
+                .description(book.getDescription())
+                .coverImage(book.getCoverImage())
+                .categoriesIds(book.getCategories().stream()
+                        .map(Category::getId)
+                        .collect(Collectors.toSet()))
+                .build();
     }
 }

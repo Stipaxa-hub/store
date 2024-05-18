@@ -13,7 +13,7 @@ services:
     depends_on:
       - db
     restart: on-failure
-    image: store-sevice
+    image: store-service
     build: .
     env_file: ./.env
     ports:
