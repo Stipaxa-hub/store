@@ -9,11 +9,12 @@ import mate.project.store.dto.book.CreateBookRequestDto;
 import mate.project.store.entity.Book;
 import mate.project.store.entity.Category;
 import org.mapstruct.AfterMapping;
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
-@Mapper(config = MapperConfig.class)
+@Mapper(config = MapperConfig.class, builder = @Builder(disableBuilder = true))
 public interface BookMapper {
     BookDto toDto(Book book);
 
