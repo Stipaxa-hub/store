@@ -133,7 +133,9 @@ class CategoryControllerTest {
                 .andReturn();
 
         // Then
-        CategoryDto actualCategoryDto = objectMapper.readValue(result.getResponse().getContentAsString(), CategoryDto.class);
+        CategoryDto actualCategoryDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CategoryDto.class
+        );
         Assertions.assertNotNull(actualCategoryDto);
         EqualsBuilder.reflectionEquals(expectedCategoryDto, actualCategoryDto, "id");
         Assertions.assertEquals(expectedCategoryDto, actualCategoryDto);
@@ -152,7 +154,9 @@ class CategoryControllerTest {
         Long id = 2L;
         CategoryRequestDto updateRequestDto = new CategoryRequestDto(
                 "Updated Category Name", "Updated Category Description");
-        CategoryDto expectedCategoryDto = new CategoryDto(id, updateRequestDto.name(), updateRequestDto.description());
+        CategoryDto expectedCategoryDto = new CategoryDto(
+                id, updateRequestDto.name(), updateRequestDto.description()
+        );
         String jsonRequest = objectMapper.writeValueAsString(updateRequestDto);
 
         // When
@@ -164,7 +168,9 @@ class CategoryControllerTest {
                 .andReturn();
 
         // Then
-        CategoryDto actualCategoryDto = objectMapper.readValue(result.getResponse().getContentAsString(), CategoryDto.class);
+        CategoryDto actualCategoryDto = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CategoryDto.class
+        );
         Assertions.assertNotNull(actualCategoryDto);
         EqualsBuilder.reflectionEquals(expectedCategoryDto, actualCategoryDto, "id");
         Assertions.assertEquals(expectedCategoryDto, actualCategoryDto);
