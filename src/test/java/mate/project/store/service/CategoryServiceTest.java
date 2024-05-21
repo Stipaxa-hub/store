@@ -7,7 +7,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import mate.project.store.dto.category.CategoryDto;
@@ -17,6 +16,7 @@ import mate.project.store.exception.EntityNotFoundException;
 import mate.project.store.mapper.CategoryMapper;
 import mate.project.store.repository.category.CategoryRepository;
 import mate.project.store.service.impl.CategoryServiceImpl;
+import mate.project.store.util.TestCategoryProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,9 +40,10 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Testing save category with valid dto")
     void saveCategory_WithValidCreateCategoryRequestDto_ShouldReturnValidCategoryDto() {
-        Category category = createDefaultCategory();
-        CategoryRequestDto categoryRequestDto = createDefaultCategoryRequestDto(category);
-        CategoryDto categoryDto = createDefaultCategoryDto(category);
+        Category category = TestCategoryProvider.createDefaultCategory();
+        CategoryRequestDto categoryRequestDto =
+                TestCategoryProvider.createDefaultCategoryRequestDto(category);
+        CategoryDto categoryDto = TestCategoryProvider.createDefaultCategoryDto(category);
 
         when(categoryMapper.requestToEntity(categoryRequestDto)).thenReturn(category);
         when(categoryRepository.save(category)).thenReturn(category);
@@ -61,8 +62,8 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Testing to get all books")
     void findAll_ValidParam_ShouldReturnValidList() {
-        List<Category> categories = createDefaultCategoriesList();
-        List<CategoryDto> categoriesDto = createDefaultCategoriesDtoList();
+        List<Category> categories = TestCategoryProvider.createDefaultCategoriesList();
+        List<CategoryDto> categoriesDto = TestCategoryProvider.createDefaultCategoriesDtoList();
         Pageable pageable = PageRequest.of(0, 10);
         Page<Category> categoryPage = new PageImpl<>(categories, pageable, categories.size());
 
@@ -86,8 +87,8 @@ class CategoryServiceTest {
     @DisplayName("Testing to valid get category by id")
     void findById_WithValidId_ShouldReturnValidCategoryDto() {
         Long categoryId = 1L;
-        Category category = createDefaultCategory();
-        CategoryDto categoryDto = createDefaultCategoryDto(category);
+        Category category = TestCategoryProvider.createDefaultCategory();
+        CategoryDto categoryDto = TestCategoryProvider.createDefaultCategoryDto(category);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         when(categoryMapper.toDto(category)).thenReturn(categoryDto);
@@ -116,13 +117,15 @@ class CategoryServiceTest {
     void updateById_WithValidId_ShouldUpdateCategory() {
         Long categoryId = 1L;
 
-        Category oldCategory = createDefaultCategory();
+        Category oldCategory = TestCategoryProvider.createDefaultCategory();
 
-        Category updatedCategory = createDefaultCategory();
+        Category updatedCategory = TestCategoryProvider.createDefaultCategory();
         updatedCategory.setName("Updated Category");
-        CategoryDto updatedCategoryDto = createDefaultCategoryDto(updatedCategory);
+        CategoryDto updatedCategoryDto =
+                TestCategoryProvider.createDefaultCategoryDto(updatedCategory);
 
-        CategoryRequestDto categoryRequestDto = createDefaultCategoryRequestDto(updatedCategory);
+        CategoryRequestDto categoryRequestDto =
+                TestCategoryProvider.createDefaultCategoryRequestDto(updatedCategory);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(oldCategory));
         when(categoryMapper.requestToEntity(categoryRequestDto)).thenReturn(updatedCategory);
@@ -146,7 +149,8 @@ class CategoryServiceTest {
         Long categoryId = 100L;
 
         CategoryRequestDto categoryRequestDto =
-                createDefaultCategoryRequestDto(createDefaultCategory());
+                TestCategoryProvider.createDefaultCategoryRequestDto(
+                        TestCategoryProvider.createDefaultCategory());
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.empty());
 
@@ -158,7 +162,7 @@ class CategoryServiceTest {
     @DisplayName("Testing to delete valid id")
     void deleteById_ValidId_ShouldDelete() {
         Long categoryId = 1L;
-        Category category = createDefaultCategory();
+        Category category = TestCategoryProvider.createDefaultCategory();
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
 
@@ -178,56 +182,5 @@ class CategoryServiceTest {
         assertThrows(EntityNotFoundException.class, (() -> categoryService.deleteById(categoryId)));
 
         verify(categoryRepository, times(1)).findById(categoryId);
-    }
-
-    public static Category createDefaultCategory() {
-        Category category = new Category();
-        category.setId(1L);
-        category.setName("Category Name For Test");
-        category.setDescription("Category Description For Test");
-        return category;
-    }
-
-    private CategoryDto createDefaultCategoryDto(Category category) {
-        return new CategoryDto(
-                category.getId(),
-                category.getName(),
-                category.getDescription()
-        );
-    }
-
-    private CategoryRequestDto createDefaultCategoryRequestDto(Category category) {
-        return new CategoryRequestDto(
-                category.getName(),
-                category.getDescription()
-        );
-    }
-
-    private List<Category> createDefaultCategoriesList() {
-        List<Category> categories = new ArrayList<>();
-
-        for (int i = 1; i <= 3; i++) {
-            Category category = new Category();
-            category.setId(Long.valueOf(i));
-            category.setName("Category" + i);
-            category.setDescription("Description" + i);
-            categories.add(category);
-        }
-        return categories;
-    }
-
-    private static List<CategoryDto> createDefaultCategoriesDtoList() {
-        List<CategoryDto> categories = new ArrayList<>();
-
-        for (int i = 1; i <= 3; i++) {
-            CategoryDto categoryDto = new CategoryDto(
-                    Long.valueOf(i),
-                    "Category" + i,
-                    "Description" + i
-            );
-            categories.add(categoryDto);
-        }
-
-        return categories;
     }
 }

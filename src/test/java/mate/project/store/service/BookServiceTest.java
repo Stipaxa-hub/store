@@ -7,20 +7,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import mate.project.store.dto.book.BookDto;
 import mate.project.store.dto.book.CreateBookRequestDto;
 import mate.project.store.entity.Book;
-import mate.project.store.entity.Category;
 import mate.project.store.exception.EntityNotFoundException;
 import mate.project.store.mapper.BookMapper;
 import mate.project.store.repository.book.BookRepository;
 import mate.project.store.service.impl.BookServiceImpl;
+import mate.project.store.util.TestBookProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,9 +40,9 @@ class BookServiceTest {
     @Test
     @DisplayName("Testing save book with valid dto")
     void saveBook_WithValidCreateBookRequestDto_ShouldReturnValidBookDto() {
-        Book book = createDefaultBook();
-        CreateBookRequestDto bookRequestDto = createDefaultBookRequestDto(book);
-        BookDto bookDto = createDefaultBookDto(book);
+        Book book = TestBookProvider.createDefaultBook();
+        CreateBookRequestDto bookRequestDto = TestBookProvider.createDefaultBookRequestDto(book);
+        BookDto bookDto = TestBookProvider.createDefaultBookDto(book);
 
         when(bookMapper.toEntity(bookRequestDto)).thenReturn(book);
         when(bookRepository.save(book)).thenReturn(book);
@@ -65,8 +61,8 @@ class BookServiceTest {
     @Test
     @DisplayName("Testing to get all books dto")
     void findAll_ValidParam_ShouldReturnValidList() {
-        List<Book> books = createDefaultListBook();
-        List<BookDto> booksDto = createDefaultListBookDto();
+        List<Book> books = TestBookProvider.createDefaultListBook();
+        List<BookDto> booksDto = TestBookProvider.createDefaultListBookDto();
         Pageable pageable = PageRequest.of(0, 10);
         Page<Book> bookPage = new PageImpl<>(books, pageable, books.size());
 
@@ -90,8 +86,8 @@ class BookServiceTest {
     @DisplayName("Testing to valid get book by id")
     void findById_WithValidId_ShouldReturnValidBookDto() {
         Long bookId = 1L;
-        Book book = createDefaultBook();
-        BookDto bookDto = createDefaultBookDto(book);
+        Book book = TestBookProvider.createDefaultBook();
+        BookDto bookDto = TestBookProvider.createDefaultBookDto(book);
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
         when(bookMapper.toDto(book)).thenReturn(bookDto);
@@ -120,13 +116,14 @@ class BookServiceTest {
     void updateById_ValidId_ShouldUpdateBook() {
         Long bookId = 1L;
 
-        Book oldBook = createDefaultBook();
+        Book oldBook = TestBookProvider.createDefaultBook();
 
-        Book updatedBook = createDefaultBook();
+        Book updatedBook = TestBookProvider.createDefaultBook();
         updatedBook.setTitle("UpdatedBook");
-        BookDto updatedBookDto = createDefaultBookDto(updatedBook);
+        BookDto updatedBookDto = TestBookProvider.createDefaultBookDto(updatedBook);
 
-        CreateBookRequestDto updatedRequestBookDto = createDefaultBookRequestDto(updatedBook);
+        CreateBookRequestDto updatedRequestBookDto =
+                TestBookProvider.createDefaultBookRequestDto(updatedBook);
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(oldBook));
         when(bookMapper.toEntity(updatedRequestBookDto)).thenReturn(updatedBook);
@@ -149,7 +146,7 @@ class BookServiceTest {
     void updateById_NotValidId_ShouldThrowException() {
         Long bookId = 100L;
         CreateBookRequestDto createBookRequestDto =
-                createDefaultBookRequestDto(createDefaultBook());
+                TestBookProvider.createDefaultBookRequestDto(TestBookProvider.createDefaultBook());
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.empty());
 
@@ -161,7 +158,7 @@ class BookServiceTest {
     @DisplayName("Testing to delete by valid id")
     void deleteById_ValidId_ShouldDelete() {
         Long bookId = 1L;
-        Book book = createDefaultBook();
+        Book book = TestBookProvider.createDefaultBook();
 
         when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
 
@@ -181,85 +178,5 @@ class BookServiceTest {
         assertThrows(EntityNotFoundException.class, () -> bookService.deleteById(bookId));
 
         verify(bookRepository, times(1)).findById(bookId);
-    }
-
-    private Book createDefaultBook() {
-        Book book = new Book();
-        book.setId(1L);
-        book.setTitle("Book Title For Test");
-        book.setAuthor("Book Author For Test");
-        book.setIsbn("0-061-96436-0");
-        book.setPrice(BigDecimal.valueOf(100));
-        book.setDescription("Book Description For Test");
-        book.setCoverImage("Book Cover Image For Test");
-        book.setCategories(Set.of(CategoryServiceTest.createDefaultCategory()));
-        return book;
-    }
-
-    private List<Book> createDefaultListBook() {
-        List<Book> books = new ArrayList<>();
-
-        for (int i = 1; i <= 3; i++) {
-            Book book = new Book();
-            book.setId(Long.valueOf(i));
-            book.setTitle("Book" + i);
-            book.setAuthor("Author" + i);
-            book.setIsbn("1234567" + i);
-            book.setPrice(BigDecimal.valueOf(i));
-            book.setDescription("Description" + i);
-            book.setCoverImage("CoverImage" + i);
-            book.setCategories(Set.of(CategoryServiceTest.createDefaultCategory()));
-            books.add(book);
-        }
-        return books;
-    }
-    
-    private List<BookDto> createDefaultListBookDto() {
-        List<BookDto> books = new ArrayList<>();
-
-        for (int i = 1; i <= 3; i++) {
-            BookDto bookDto = BookDto.builder()
-                    .id(Long.valueOf(i))
-                    .title("Book" + i)
-                    .author("Author" + i)
-                    .isbn("1234567" + i)
-                    .price(BigDecimal.valueOf(i))
-                    .description("Description" + i)
-                    .coverImage("CoverImage" + i)
-                    .categoriesIds(Set.of(Long.valueOf(i)))
-                    .build();
-            books.add(bookDto);
-        }
-        
-        return books;
-    }
-
-    private BookDto createDefaultBookDto(Book book) {
-        return BookDto.builder()
-                .id(book.getId())
-                .title(book.getTitle())
-                .author(book.getAuthor())
-                .isbn(book.getIsbn())
-                .price(book.getPrice())
-                .description(book.getDescription())
-                .coverImage(book.getCoverImage())
-                .categoriesIds(book.getCategories().stream()
-                        .map(Category::getId)
-                        .collect(Collectors.toSet()))
-                .build();
-    }
-
-    private CreateBookRequestDto createDefaultBookRequestDto(Book book) {
-        return CreateBookRequestDto.builder()
-                .title(book.getTitle())
-                .author(book.getAuthor())
-                .isbn(book.getIsbn())
-                .price(book.getPrice())
-                .description(book.getDescription())
-                .coverImage(book.getCoverImage())
-                .categoriesIds(book.getCategories().stream()
-                        .map(Category::getId)
-                        .collect(Collectors.toSet()))
-                .build();
     }
 }
