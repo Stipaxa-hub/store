@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import mate.project.store.dto.order.OrderAddressRequestDto;
@@ -13,18 +14,18 @@ import mate.project.store.dto.order.OrderStatusRequestDto;
 import mate.project.store.dto.orderitem.OrderItemDto;
 import mate.project.store.entity.CartItem;
 import mate.project.store.entity.Order;
+import mate.project.store.entity.OrderItem;
 import mate.project.store.entity.ShoppingCart;
 import mate.project.store.entity.User;
 import mate.project.store.entity.enums.Status;
 import mate.project.store.exception.EntityNotFoundException;
 import mate.project.store.mapper.OrderItemMapper;
 import mate.project.store.mapper.OrderMapper;
-import mate.project.store.mapper.ShoppingCartMapper;
+import mate.project.store.repository.cartitem.CartItemRepository;
 import mate.project.store.repository.order.OrderRepository;
-import mate.project.store.repository.orderitem.OrderItemRepository;
+import mate.project.store.repository.shoppingcart.ShoppingCartRepository;
 import mate.project.store.repository.user.UserRepository;
 import mate.project.store.service.OrderService;
-import mate.project.store.service.ShoppingCartService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,35 +33,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
-    private final ShoppingCartService shoppingCartService;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final ShoppingCartMapper shoppingCartMapper;
+    private final CartItemRepository cartItemRepository;
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
 
     @Transactional
     @Override
     public OrderDto placeOrder(OrderAddressRequestDto requestDto, Authentication authentication) {
-        Order order = new Order();
+
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new EntityNotFoundException("Can't find user with email: "
                         + authentication.getName()));
-        order.setUser(user);
-        order.setStatus(Status.CREATED);
-        ShoppingCart shoppingCart = shoppingCartMapper.toEntity(
-                shoppingCartService.getShoppingCart(authentication)
-        );
-        BigDecimal totalPrice = calculateTotalPrice(shoppingCart);
-        order.setTotal(totalPrice);
-        order.setOrderDate(LocalDateTime.now());
-        order.setShippingAddress(requestDto.getShippingAddress());
-        orderRepository.save(order);
-        shoppingCart.getCartItems().stream()
-                .map(item -> orderItemMapper.cartItemToOrderItem(item, order))
-                .map(orderItemRepository::save)
-                .collect(Collectors.toSet());
+        Order order = buildOrder(user, requestDto.getShippingAddress());
+        order = orderRepository.save(order);
+        clearCartByShoppingCartId(user.getId());
         return orderMapper.toDto(order);
     }
 
@@ -115,10 +104,48 @@ public class OrderServiceImpl implements OrderService {
                         + orderId));
     }
 
-    private BigDecimal calculateTotalPrice(ShoppingCart shoppingCart) {
+    private BigDecimal calculateTotalPrice(List<OrderItem> orderItems) {
+        return orderItems.stream()
+                .map(orderItem -> orderItem.getPrice()
+                        .multiply(BigDecimal.valueOf(orderItem.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private Order buildOrder(User user, String address) {
+        Order order = new Order();
+        order.setUser(user);
+        order.setStatus(Status.CREATED);
+        order.setOrderDate(LocalDateTime.now());
+        order.setShippingAddress(address);
+        List<OrderItem> orderItems = getOrdersItems(user.getId());
+        orderItems.forEach(orderItem -> orderItem.setOrder(order));
+        order.setTotal(calculateTotalPrice(orderItems));
+
+        Set<OrderItem> orderItemSet = new TreeSet<>(
+                (item1, item2) -> {
+                    int quantityComparison = Integer.compare(item1.getQuantity(),
+                            item2.getQuantity());
+                    if (quantityComparison == 0) {
+                        return item1.getPrice().compareTo(item2.getPrice());
+                    }
+                    return quantityComparison;
+                }
+        );
+        orderItemSet.addAll(orderItems);
+        order.setOrderItems(orderItemSet);
+
+        return order;
+    }
+
+    private List<OrderItem> getOrdersItems(Long id) {
+        ShoppingCart shoppingCart = shoppingCartRepository.getShoppingCartByUserId(id);
         Set<CartItem> cartItems = shoppingCart.getCartItems();
         return cartItems.stream()
-                .map(item -> item.getBook().getPrice())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(orderItemMapper::cartItemToOrderItem)
+                .collect(Collectors.toList());
+    }
+
+    private void clearCartByShoppingCartId(Long id) {
+        cartItemRepository.deleteCartItemsByShoppingCartId(id);
     }
 }

@@ -6,10 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.Set;
+import lombok.Builder;
 import lombok.Data;
 import org.hibernate.validator.constraints.ISBN;
 
 @Data
+@Builder
 public class CreateBookRequestDto {
     @NotNull(message = "Title can't be null")
     @NotBlank(message = "Title can't be empty")
